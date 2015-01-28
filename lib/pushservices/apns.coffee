@@ -10,9 +10,16 @@ class PushServiceAPNS
         conf.errorCallback = (errCode, note, device) =>
             @logger?.error("APNS Error #{errCode} for subscriber #{device?.subscriberId}")
             @failCallback()
+
+        # The APN library decided to change the default version of those variables in 1.5.1
+        # Maintain the previous defaults in order not to break backward compat.
+        conf['gateway'] ||= 'gateway.push.apple.com'
+        conf['address'] ||= 'feedback.push.apple.com'
         @driver = new apns.Connection(conf)
 
         @payloadFilter = conf.payloadFilter
+
+        @conf = conf
 
         @feedback = new apns.Feedback(conf)
         # Handle Apple Feedbacks
@@ -39,8 +46,19 @@ class PushServiceAPNS
             if payload.incrementBadge
                 badge += 1
 
+            category = payload.category
+            contentAvailable = payload.contentAvailable
+
+            if not contentAvailable? and @conf.contentAvailable?
+              contentAvailable = @conf.contentAvailable
+
+            if not category? and @conf.category?
+              category = @conf.category
+
             note.badge = badge if not isNaN(badge)
             note.sound = payload.sound
+            note.category = category
+            note.contentAvailable = contentAvailable
             if @payloadFilter?
                 for key, val of payload.data
                     note.payload[key] = val if key in @payloadFilter
