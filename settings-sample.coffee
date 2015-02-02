@@ -38,6 +38,8 @@ exports['apns'] =
     # Selects data keys which are allowed to be sent with the notification
     # Keep in mind that APNS limits notification payload size to 256 bytes
     payloadFilter: ['messageFrom']
+    # whether or not add badge counter to notification payload. defaults to true
+    # disableBadgeCounter: true
     # uncommant for dev env
     #gateway: 'gateway.sandbox.push.apple.com'
     #address: 'feedback.sandbox.push.apple.com'
@@ -55,6 +57,9 @@ exports['apns'] =
 #     # This setting not overrides the value for the parameter that is set in the payload fot event request.
 #     # category: 'show'
 #     # contentAvailable: true
+#     # whether or not add badge counter to notification payload. defaults to true
+#     # disableBadgeCounter: true
+
 
 exports['gcm'] =
     enabled: yes

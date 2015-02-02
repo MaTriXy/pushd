@@ -17,7 +17,7 @@ class PushServiceAPNS
         @driver = new apns.Connection(conf)
 
         @payloadFilter = conf.payloadFilter
-        
+
         @conf = conf
 
         @feedback = new apns.Feedback(conf)
@@ -43,7 +43,7 @@ class PushServiceAPNS
             badge = parseInt(info.badge)
             if payload.incrementBadge
                 badge += 1
-            
+
             category = payload.category
             contentAvailable = payload.contentAvailable
 
@@ -53,7 +53,9 @@ class PushServiceAPNS
             if not category? and @conf.category?
               category = @conf.category
 
-            note.badge = badge if not isNaN(badge)
+            badgeEnabled = !@conf.disableBadgeCounter?
+            note.badge = badge if not isNaN(badge) and badgeEnabled
+
             note.sound = payload.sound
             note.category = category
             note.contentAvailable = contentAvailable
